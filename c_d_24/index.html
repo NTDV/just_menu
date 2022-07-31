@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta property="og:title" content="Давайте сыграем в игру">
+	<meta property="og:site_name" content="Любовь морковь">
+	<meta property="og:url" content="https://ntdv.github.io/just_menu/c_d_24/index.html">
+	<meta property="og:description" content="Мамочка, Папочка? прошло ровно 24 года вашей совместной жизни. Мы от всей души вас поздравляем! И хотим предложить сыграть в игру.">
+	<meta property="og:image" content="img/q.jpg">
+	<title>Любовь морковь</title>
+	<style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+		a,
+		img {
+			cursor: pointer;
+		}
+
+		a {
+            float: right;
+		}
+
+        body {
+            background-size: cover;
+            background: linear-gradient(to left top, #80dde4, #cf8ce6) no-repeat center center fixed; /* Это цвет для фона */
+			color: white;
+			font-family: "Calibri Light", system-ui;
+        }
+
+		.title {
+			margin-left: 10px;
+			margin-top: 15px;
+		}
+
+        .memory-game {
+            width: 800px;
+            height: 800px;
+            margin: auto;
+            display: flex;
+            flex-wrap: wrap;
+            perspective: 1000px;
+        }
+
+        .memory-card {
+            width: 23%;
+            height: 30%;
+            margin: 5px;
+            position: relative;
+            transform: scale(1);
+            transform-style: preserve-3d;
+            transition: transform .5s;
+        }
+
+        .memory-card:active {
+            transform: scale(0.97);
+            transition: transform .2s;
+        }
+
+        .memory-card.flip {
+            transform: rotateY(180deg);
+        }
+
+        .front-face,
+        .back-face {
+            width: 100%;
+            height: 100%;
+            padding: 10px;
+            position: absolute;
+            border-radius: 12px;
+            background: linear-gradient(to right top, #8dff97, #d9b4fd);  /* Это цвет для карточки */
+            backface-visibility: hidden;
+            box-shadow: 1px 1px 1px rgba(0,0,0,.3);
+        }
+
+        .front-face {
+            transform: rotateY(180deg);
+            background: linear-gradient(#06beb6, #48b1bf); /* Это цвет для перевернутой карточки */
+        }
+
+        .content-blocker {
+            position: fixed;
+            margin: auto;
+            display: flex;
+            flex-wrap: wrap;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(20, 30, 48, 0.8), rgba(36, 59, 85, 0.8));
+            z-index: 4444;
+        }
+
+        .rounded-card {
+			max-width: 800px;
+            border-radius: 13px;
+            background: linear-gradient(#e4e1ef, #ffd9d6); /* Это цвет для окна с текстом */
+			color: #2d1e1e;
+            margin: 40px auto auto;
+            padding: 25px;
+        }
+
+		.hidden {
+			display: none;
+		}
+	</style>
+	<script>
+		let count = 0;
+
+		function onNext(type) {
+            document.getElementById(type).classList.add('hidden');
+            count++;
+            if (count === 6) {
+                document.getElementById('end').classList.remove('hidden');
+			}
+		}
+
+        document.addEventListener("DOMContentLoaded", function(event) {
+            const cards = document.querySelectorAll('.memory-card');
+
+            let hasFlippedCard = false;
+            let lockBoard = false;
+            let firstCard, secondCard;
+
+            function flipCard() {
+                if (lockBoard) return;
+                if (this === firstCard) return;
+
+                this.classList.add('flip');
+
+                if (!hasFlippedCard) {
+                    hasFlippedCard = true;
+                    firstCard = this;
+
+                    return;
+                }
+
+                secondCard = this;
+                checkForMatch();
+            }
+
+            function checkForMatch() {
+                let isMatch = firstCard.dataset.type === secondCard.dataset.type;
+
+                if (isMatch) {
+                    document.getElementById(firstCard.dataset.type).classList.remove('hidden');
+                    disableCards();
+                } else {
+                    unflipCards();
+                }
+            }
+
+            function disableCards() {
+                firstCard.removeEventListener('click', flipCard);
+                secondCard.removeEventListener('click', flipCard);
+
+                resetBoard();
+            }
+
+            function unflipCards() {
+                lockBoard = true;
+
+                setTimeout(() => {
+                    firstCard.classList.remove('flip');
+                    secondCard.classList.remove('flip');
+
+                    resetBoard();
+                }, 1500);
+            }
+
+            function resetBoard() {
+                [hasFlippedCard, lockBoard] = [false, false];
+                [firstCard, secondCard] = [null, null];
+            }
+
+            (function shuffle() {
+                cards.forEach(card => {
+                    card.style.order = Math.floor(Math.random() * 12);
+                });
+            })();
+
+            cards.forEach(card => card.addEventListener('click', flipCard));
+        });
+	</script>
+</head>
+<body>
+<div id="pankeek" class="hidden">
+	<div class="content-blocker">
+		<div class="rounded-card">
+			<h2>Масленица!</h2>
+			<p>
+				У нас есть прекрассная традиция каждый год наряжать ёлку старыми вещами.
+				Это незабываемый праздник, который каждый год оставляет море положительных эмоций.
+			</p>
+			<h3><a onclick="onNext('pankeek')">➡</a></h3>
+		</div>
+	</div>
+</div>
+
+<div id="schend" class="hidden">
+	<div class="content-blocker">
+		<div class="rounded-card">
+			<h2>Выпускной</h2>
+			<p>
+				На наших выпускных мы были самой красивой семьёй!
+				<br/>
+				Спасибо вам за это 💝
+			</p>
+			<h3><a onclick="onNext('schend')">➡</a></h3>
+		</div>
+	</div>
+</div>
+
+<div id="facefun" class="hidden">
+	<div class="content-blocker">
+		<div class="rounded-card">
+			<h2>Весёлые!</h2>
+			<p>
+				Корчить рожицы у нас семейное 😁
+			</p>
+			<h3><a onclick="onNext('facefun')">➡</a></h3>
+		</div>
+	</div>
+</div>
+
+<div id="foolfun" class="hidden">
+	<div class="content-blocker">
+		<div class="rounded-card">
+			<h2>На одной волне</h2>
+			<p>
+				Вы всегда стараетесь быть с нами на одной волне.
+				<br/>
+				Поэтому нам с вами так весело 💘
+			</p>
+			<h3><a onclick="onNext('foolfun')">➡</a></h3>
+		</div>
+	</div>
+</div>
+
+<div id="sport" class="hidden">
+	<div class="content-blocker">
+		<div class="rounded-card">
+			<h2>Мама, папа, я - спортивная семья!</h2>
+			<p>
+				В выходные вы всегда стараетесь побольше провести время с нами.
+				<br/>
+				И это активное времяпровождение нам всегда очень нравилось 💓
+			</p>
+			<h3><a onclick="onNext('sport')">➡</a></h3>
+		</div>
+	</div>
+</div>
+
+<div id="marriage" class="hidden">
+	<div class="content-blocker">
+		<div class="rounded-card">
+			<h2>Свадьба</h2>
+			<p>
+				Самые красивые фото получаются на свадьбе ❤
+			</p>
+			<h3><a onclick="onNext('marriage')">➡</a></h3>
+		</div>
+	</div>
+</div>
+
+<div id="end" class="hidden">
+	<div class="content-blocker">
+		<div class="rounded-card">
+			<h2>Это конец?</h2>
+			<p>
+				Эта игра подошла к концу, но ваша жизнь продолжается
+				<br/>
+				Впереди много незабываемых моментов:
+				<br/>
+				Турция, Мальдивы, зимняя поездка на красную поляну и формула 1.
+				<br/>
+				Этот год был очень насыщенным, но это не значит, что следующий будет скучным.
+				<br/>
+				Мы вас обожаем, вы у нас самые лучшие!
+			</p>
+		</div>
+	</div>
+</div>
+
+<section class="memory-game">
+	<div class="title">
+		<h1>Сегодня 24 года вашей совместной жизни </h1>
+		<h4>Предлагаю сыграть в игру: найдите фотографии, отражающие одно и то же важе качество или просто какойто факт.</h4>
+		<br>
+	</div>
+
+	<div style="visibility: hidden">a</div>
+
+	<div class="memory-card" data-type="pankeek">
+		<img class="front-face" src="img/pankeek_1.jpg" alt="Масленица" />
+		<img class="back-face" src="img/q.jpg" alt="Карточка" />
+	</div>
+	<div class="memory-card" data-type="pankeek">
+		<img class="front-face" src="img/pankeek_2.jpg" alt="Масленица" />
+		<img class="back-face" src="img/q.jpg" alt="Карточка" />
+	</div>
+
+	<div class="memory-card" data-type="schend">
+		<img class="front-face" src="img/schend_1.jpg" alt="Выпускной" />
+		<img class="back-face" src="img/q.jpg" alt="Карточка" />
+	</div>
+	<div class="memory-card" data-type="schend"> 
+		<img class="front-face" src="img/schend_2.jpg" alt="Выпускной" />
+		<img class="back-face" src="img/q.jpg" alt="Карточка" />
+	</div>
+
+	<div class="memory-card" data-type="facefun">
+		<img class="front-face" src="img/facefun_1.jpg" alt="Гримассы" />
+		<img class="back-face" src="img/q.jpg" alt="Карточка" />
+	</div>
+	<div class="memory-card" data-type="facefun">
+		<img class="front-face" src="img/facefun_2.jpg" alt="Гримассы" />
+		<img class="back-face" src="img/q.jpg" alt="Карточка" />
+	</div>
+
+	<div class="memory-card" data-type="foolfun">
+		<img class="front-face" src="img/foolfun_1.jpg" alt="Дурачимся" />
+		<img class="back-face" src="img/q.jpg" alt="Карточка" />
+	</div>
+	<div class="memory-card" data-type="foolfun">
+		<img class="front-face" src="img/foolfun_2.jpg" alt="Дурачимся" />
+		<img class="back-face" src="img/q.jpg" alt="Карточка" />
+	</div>
+
+	<div class="memory-card" data-type="sport">
+		<img class="front-face" src="img/sport_1.jpg" alt="Спорт" />
+		<img class="back-face" src="img/q.jpg" alt="Карточка" />
+	</div>
+	<div class="memory-card" data-type="sport">
+		<img class="front-face" src="img/sport_2.jpg" alt="Спорт" />
+		<img class="back-face" src="img/q.jpg" alt="Карточка" />
+	</div>
+
+	<div class="memory-card" data-type="marriage">
+		<img class="front-face" src="img/marriage_1.JPG" alt="Свадьба" />
+		<img class="back-face" src="img/q.jpg" alt="Карточка" />
+	</div>
+	<div class="memory-card" data-type="marriage">
+		<img class="front-face" src="img/marriage_2.jpg" alt="Свадьба" />
+		<img class="back-face" src="img/q.jpg" alt="Карточка" />
+	</div>
+</section>
+</body>
+</html>
